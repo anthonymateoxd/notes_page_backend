@@ -1,0 +1,84 @@
+USE app;
+
+CREATE TABLE users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE bitacora_users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+
+-- TRIGGER FOR INSERTS INTO THE 'USERS' TABLE
+CREATE TRIGGER after_users_insert
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+    INSERT INTO bitacora_users (email, password, created_at, updated_at) 
+    VALUES (NEW.email, NEW.password, NEW.created_at, NEW.updated_at);
+END$$
+
+-- TRIGGER FOR UPDATES ON THE 'USERS' TABLE
+CREATE TRIGGER after_users_update
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+    -- INSERT A NEW RECORD TO LOG THE UPDATE
+    INSERT INTO bitacora_users (email, password, created_at, updated_at)
+    VALUES (NEW.email, NEW.password, NEW.created_at, NEW.updated_at);
+END$$
+
+DELIMITER ;
+
+CREATE TABLE folders (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    color VARCHAR(20),
+	created_At DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE 
+);
+
+CREATE TABLE notes (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    folder_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    content TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE CASCADE
+);
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+
+INSERT INTO users (email, password)
+VALUES 
+  ('alice@example.com', 'alicepass'),
+  ('bob@example.com', 'bobpass');
+  
+SELECT * FROM users;
+SELECT * FROM bitacora_users;
+
+INSERT INTO folders (user_id, name, color ) 
+VALUES
+(1, 'Work Notes', '#FF5733'),
+(2, 'Personal', '#4287f5');
+
+INSERT INTO notes (folder_id, title, content)
+VALUES
+(1, 'Project Plan', 'Draft Outline of the project goals and milestones.');
+
+SELECT * FROM users;
+SELECT * FROM folders;
+SELECT * FROM notes;
+SELECT * FROM bitacora_users;

@@ -21,6 +21,9 @@ build/
 .next/
 out/
 
+# Enviroment
+.env
+
 # Database
 *.sql
 *.dump

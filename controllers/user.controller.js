@@ -41,8 +41,8 @@ export const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await connection.execute(
-      'INSERT INTO users (email, password, name, description) VALUES (?, ?, ?, ?)',
-      [email, hashedPassword, name, description]
+      'INSERT INTO users (name, email, password, description) VALUES (?, ?, ?, ?);',
+      [name, email, hashedPassword, description]
     );
 
     const token = await createAccessToken({ id: result.insertId });

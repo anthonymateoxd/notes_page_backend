@@ -13,12 +13,12 @@ app.use(cookieParser());
 
 dotenv.config();
 
-let port = process.env.REACT_APP_PORT;
-let host = process.env.REACT_APP_HOST;
+let port = process.env.REACT_APP_PORT || 8080;
+let host = process.env.REACT_APP_HOST || '0.0.0.0';
 
 app.use(
   cors({
-    origin: `http://${host}:${port}`,
+    origin: [`http://${host}:${port}`, `http://localhost:8080`],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

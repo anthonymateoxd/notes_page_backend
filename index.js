@@ -4,8 +4,8 @@ import { getConnection } from './connection/connection.js';
 
 dotenv.config();
 
-let port = process.env.PORT;
-let host = process.env.HOST;
+let port = process.env.PORT || 4000;
+let host = process.env.HOST || '0.0.0.0';
 
 getConnection();
 app.listen(port, host);

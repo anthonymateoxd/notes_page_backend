@@ -15,7 +15,7 @@ const userRouter = Router();
 // userRouter.get('/users', getUsers);
 userRouter.get('/user', authRequired, getUserById);
 userRouter.post('/user', createUser);
-
+//
 userRouter.post('/login', loginUser);
 userRouter.get('/verify', verifyToken);
 userRouter.post('/logout', logout);
